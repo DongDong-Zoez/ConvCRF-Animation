@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.0.1/lib/anime.min.js"></script>
+
+    <style>
+        html,
+        body {
+            background-color: black;
+            display: flex;
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+            left: 100px;
+            top: 50px;
+            width: 100px;
+            height: 100px;
+            border: #000000 2px solid;
+            transform: scale(0.5, 0.5);
+        }
+
+        .box {
+            opacity: 1;
+            position: absolute;
+            width: 78px;
+            height: 78px;
+            border: #ffffff 2px solid;
+            border-radius: 5px;
+            background-color: #000000;
+            box-shadow: 0px 0px 3px 1px #ffffff;
+            /* background-color: #00FF00; */
+            transition-duration: 1s;
+            color: white;
+            font-size: 25px;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .rotated {
+            transform: rotate3d(1, 2, -1, 192deg);
+            background-color: pink;
+        }
+
+        .box:hover {
+            border: #2cc3ff 2px solid;
+            box-shadow: 0px 0px 2px 2px #2cc3ff,
+                inset 0px 0px 2px 2px #2cc3ff;
+            /* background-color: #0000FF; */
+        }
+
+        #info {
+            left: 0px;
+            top: -90px;
+            position: absolute;
+            color: white;
+            z-index: 10;
+        }
+
+        #log {
+            left: 10px;
+            top: -90px;
+            font-size: 50px;
+            background-color: transparent;
+            position: absolute;
+            color: white;
+            z-index: 10;
+            outline: none;
+            border: 0;
+        }
+
+        #overlaplog {
+            left: 710px;
+            top: -90px;
+            font-size: 50px;
+            background-color: transparent;
+            position: absolute;
+            color: rgb(0, 0, 0);
+            z-index: 10;
+            outline: none;
+            border: 0;
+        }
+
+        #gaussianlog {
+            left: 10px;
+            top: 510px;
+            font-size: 50px;
+            background-color: transparent;
+            position: absolute;
+            color: rgb(255, 255, 255);
+            z-index: 10;
+            outline: none;
+            border: 0;
+        }
+
+        #operationlog {
+            left: 530px;
+            top: 808px;
+            font-size: 50px;
+            background-color: transparent;
+            position: absolute;
+            color: rgb(255, 255, 255);
+            z-index: 10;
+            outline: none;
+            border: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <span id="info"></span>
+        <input id="log" value="" readonly>
+        <input id="overlaplog" value="" readonly>
+        <input id="gaussianlog" value="" readonly>
+        <input id="operationlog" value="" readonly>
+    </div>
+
+    <script>
+        const Height = 5
+        const container = document.querySelector(".container");
+        const info = document.querySelector("#info");
+        const log = document.querySelector("#log");
+
+        const divs = Array(Height).fill().map(value => Array(Height));
+        for (let i = 0; i < Height; i++) {
+            for (let j = 0;
+                j < Height; j++) {
+                const div = document.createElement("div");
+                div.classList.add("box");
+                container.appendChild(div);
+                div.style.left = `${j * 100}px`;
+                div.style.top = `${i * 100}px`;
+                divs[i][j] = div;
+                div.textContent = Math.random().toPrecision(2);
+                div.ext_data = {
+                    indexing: { i: i, j: j },
+                    backgroundColor: [0, 0, 0, 0]
+                };
+            }
+        }
+
+        function cloneElement(elem) {
+            const new_elem = elem.cloneNode(true);
+            new_elem.ext_data = {
+                indexing: {
+                    i: elem.ext_data.indexing.i,
+                    j: elem.ext_data.indexing.j
+                },
+                backgroundColor: elem.ext_data.backgroundColor.slice()
+            };
+            return new_elem;
+        }
+    </script>
+
+    <script>
+        function apply(array, callback) {
+            array.forEach((row, i) => {
+                row.forEach((element, j) => {
+                    callback(element, i, j);
+                });
+            });
+        }
+
+        function slice(array, ri, rj, callback = x => x) {
+            if (ri[1] <= 0) { ri[1] = Height + ri[1] }
+            if (rj[1] <= 0) { rj[1] = Height + rj[1] }
+            const subarray = [];
+            for (let i = ri[0]; i < Math.min(ri[1], array.length); i++) {
+                const row = [];
+                for (let j = rj[0]; j < Math.min(rj[1], array[i].length); j++)
+                    row.push(callback(array[i][j]));
+                subarray.push(row);
+            }
+            return subarray;
+        }
+
+        function toColorString(color) {
+            const _color = color.map(number => number.toString(16).padStart(2, "0"));
+            return `#${_color.join("")}`;
+        }
+
+        function drawBackgroundColor(elems = divs) {
+            apply(elems, elem => {
+                const color = elem.ext_data.backgroundColor.map(number => number.toString(16).padStart(2, "0"));
+                elem.style.backgroundColor = `#${color.join("")}`;
+            });
+        }
+    </script>
+
+    <script>
+
+        const filterSize = 5
+        const span = parseInt(filterSize / 2)
+
+        function displayUnary(num_classes, color_list, x_list, y_list) {
+            for (let i = 0; i < num_classes; i++){
+                buildUnary(color_list[i], x_list[i], y_list[i])
+            }
+        }
+
+        async function buildUnary(color, x, y){
+            const box = slice(divs, [0, Height], [0, Height], cloneElement);
+            const plane = document.createElement("div");
+            container.appendChild(plane);
+            plane.style.position = "absolute";
+            plane.style.left = "600px";
+            plane.style.top = "600px";
+            plane.style.opacity = 0;
+            plane.style.transform = `translateX(${x}px) translateY(${y}px) scale(0.9, 1) skew(0deg, -20deg)`//"rotate3d(-1, 1, -0.29, 44deg);
+            apply(box, elem =>{
+                plane.appendChild(elem);
+                elem.textContent = Math.random().toPrecision(2);
+                elem.style.backgroundColor =  toColorString(color);
+                anime({
+                    targets: plane,
+                    opacity: 1,
+                    duration: 5000
+                })
+            });
+            await sleep(3000)
+            apply(box, elem =>{
+                anime({
+                    targets: plane,
+                    opacity: 0,
+                    duration: 5000
+                })
+            });
+        }
+
+        async function displayConfig(span) {
+            for (let dx = -span; dx < span + 1; dx++) {
+                for (let dy = -span; dy < span + 1; dy++) {
+                    var [dx1, dx2] = _get_ind(dx)
+                    var [dy1, dy2] = _get_ind(dy)
+                    updateText(`(dx, dy) = (${[dy, dx]})`, log, {
+                        duration: 5000,
+                        color: '#FFFFFF'
+                    })
+                    updateText(`(bs, 1, ${span+dy}, ${span+dx} ,h, w)`, gaussianlog, {
+                        duration: 5000,
+                        color: '#FFFFFF'
+                    })
+                    await sleep(1000)
+                    _draw_box(dx1, dx2, dy1, dy2)
+                    const box1 = newElemConfig(dx1, dx2, dy1, dy2, 200 + (Height - dy1) * 100, 0 - dx1 * 100, color = [0, 0, 255], dy, dx)
+                    const box2 = newElemConfig(dx2, dx1, dy2, dy1, 200 + (Height - dy2) * 100, 600 - dx2 * 100, color = [255, 0, 0], dy, dx)
+                    const box = slice(divs, [0, Height], [0, Height], cloneElement);
+                    apply(box, elem => {
+                        container.appendChild(elem);
+                        // elem.style.duration = "0s";
+                        elem.style.transform = `translate(${0}px, ${600}px)`;
+                        elem.style.backgroundColor = "#000000";
+                        elem.style.opacity = 0;
+                        elem.textContent = '0.0';
+                        anime({
+                            targets: elem,
+                            easing: 'easeInOutExpo',
+                            opacity: 1
+                        });
+                    });
+                    // easingTranslate(x = 0, y = 600, box, [0,0,0])
+                    await sleep(3000)
+                    easingTranslate(200 + (Height - dy1) * 100 - (dy2 - dy1) * 100, 0 - dx1 * 100 - (dx2 - dx1) * 100, box2, [255,0,0])
+                    await sleep(3000)
+                    const [box2arr, diff] = minusAnime(box1, box2);
+                    const kg = exp(diff);
+                    updateText("minus", overlaplog, { 
+                        duration: 5000,
+                        color: "#FFFFFF"
+                    });
+                    updateValue(box2, box2arr, diff)
+                    await sleep(3000)
+                    updateText("minus", overlaplog, { 
+                        duration: 5000,
+                        color: "#000000"
+                    });
+                    removeElements(box1);
+                    await sleep(1000)
+                    updateText('exp', overlaplog, {
+                        duration: 5000,
+                        color: "#FFFFFF"
+                    });
+                    updateValue(box2, box2arr, kg);
+                    await sleep(3000)
+                    updateText("exp", overlaplog, { 
+                        duration: 5000,
+                        color: "#000000"
+                    });
+                    await sleep(1000)
+                    easingTranslate(0, 600, box2, [255,0,0])
+                    await sleep(1000)
+                    updateText('x', operationlog, {
+                        duration: 5000,
+                        color: "#FFFFFF"
+                    })
+                    displayUnary(5,[[255,0,0], [0,255,0], [0,0,255], [255,255,0], [255,0,255]], [0,50,100,150,200], [50,70,90,110,130]);
+                    await sleep(3000)
+                    updateText('x', operationlog, {
+                        duration: 5000,
+                        color: "#000000"
+                    })
+                    updateText(`(dx, dy) = (${[dx, dy]})`, log, {
+                        duration: 5000,
+                        color: '#000000'
+                    })
+                    updateText(`(bs, 1, ${span+dy}, ${span+dx} ,h, w)`, gaussianlog, {
+                        duration: 5000,
+                        color: '#000000'
+                    })
+                    apply(box2, elem => {
+                        elem.style.opacity = 0;
+                    });
+                    apply(box, elem => {
+                        elem.style.opacity = 0;
+                    });
+                    await sleep(2000)
+
+                    removeElements(box2)
+                    removeElements(box)
+                }
+            }
+        }
+        displayConfig(span)
+
+        function minus(arra, arrb) {
+            arr = []
+            for (let i = 0; i < arra.length; i++) {
+                arr.push((arrb[i] - arra[i]).toPrecision(2))
+            }
+            return arr
+        }
+
+        function exp(arr) {
+            subarr = []
+            for (let i = 0; i < arr.length; i++) {
+                subarr.push(Math.exp(-arr[i] * arr[i] * 0.5).toPrecision(2))
+            }
+            return subarr
+        }
+
+        function minusAnime(elema, elemb) {
+            subarraya = [];
+            subarrayb = [];
+
+            apply(elema, elem => {
+                elem.ext_data.backgroundColor = color;
+                //drawBackgroundColor(new_elems);
+                container.appendChild(elem);
+                subarraya.push(parseFloat(elem.textContent));
+            });
+            apply(elemb, elem => {
+                elem.ext_data.backgroundColor = color;
+                //drawBackgroundColor(new_elems);
+                container.appendChild(elem);
+                subarrayb.push(parseFloat(elem.textContent));
+            });
+            diff = minus(subarraya, subarrayb)
+
+            return [subarrayb, diff]
+        }
+
+        function updateValue(elems, originarr, newarr, config = null) {
+            h = elems[1].length
+            apply(elems, (elem, i, j) => {
+                const idx = i * h + j
+                elem.ext_data.backgroundColor = color;
+                //drawBackgroundColor(new_elems);
+                container.appendChild(elem);
+                anime({
+                    easing: 'easeInOutExpo',
+                    ...config,
+                    update: anim => {
+                        const value = originarr[idx] + (newarr[idx] - originarr[idx]) * anim.progress / 100;
+                        elem.textContent = value.toPrecision(2);
+                    },
+                });
+                elem.textContent = newarr[idx];
+            });
+        }
+
+        function easingTranslate(x, y, elems = divs, color = null, config = null) {
+            apply(elems, elem => {
+                elem.ext_data.backgroundColor = color;
+                //drawBackgroundColor(new_elems);
+                container.appendChild(elem);
+                anime({
+                    targets: elem,
+                    translateX: x,
+                    translateY: y,
+                    easing: 'easeInOutExpo',
+                    backgroundColor: toColorString(elem.ext_data.backgroundColor),
+                    ...config,
+                });
+            });
+        }
+
+        function updateText(value, logger, config = null) {
+            logger.value = value;
+            anime({
+                targets: logger,
+                ...config
+            });
+        }
+
+        function newElemConfig(dx1, dx2, dy1, dy2, x = 500, y = 0, color = [255, 0, 0, 255], dx = -2, dy = -2, elems = divs) {
+            const new_elems = slice(elems, [dx1, _negative(dx2)], [dy1, _negative(dy2)], cloneElement);
+            apply(new_elems, elem => {
+                elem.ext_data.backgroundColor = color;
+                //drawBackgroundColor(new_elems);
+                container.appendChild(elem);
+                anime({
+                    targets: elem,
+                    translateX: x,
+                    translateY: y,
+                    easing: 'easeInOutExpo',
+                    backgroundColor: toColorString(elem.ext_data.backgroundColor),
+                });
+            });
+            return new_elems;
+        }
+
+        function removeElements(elems) {
+            apply(elems, elem => container.removeChild(elem));
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function _draw_box(dx1, dx2, dy1, dy2) {
+            apply(slice(divs, [dx1, _negative(dx2)], [dy1, _negative(dy2)]), (elem, i, j) => {
+                anime({
+                    targets: elem,
+                    easing: 'easeInOutExpo',
+                    backgroundColor: toColorString([0, 0, 255]),
+                });
+                elem.classList.add("selected");
+                elem.ext_data.backgroundColor = [0, 0, 255];
+            });
+            apply(slice(divs, [dx2, _negative(dx1)], [dy2, _negative(dy1)]), (elem, i, j) => {
+                const color = [
+                    elem.ext_data.backgroundColor[0] + 255,
+                    elem.ext_data.backgroundColor[1] + 0,
+                    elem.ext_data.backgroundColor[2] + 0,
+                ];
+                anime({
+                    targets: elem,
+                    easing: 'easeInOutExpo',
+                    backgroundColor: toColorString(color),
+                });
+                elem.classList.add("selected");
+                elem.ext_data.backgroundColor = [255, 0, 0];
+            });
+            drawBackgroundColor();
+            apply(slice(divs, [dx1, _negative(dx2)], [dy1, _negative(dy2)]), (elem, i, j) => {
+                elem.ext_data.backgroundColor = [0, 0, 0, 0];
+            });
+            apply(slice(divs, [dx2, _negative(dx1)], [dy2, _negative(dy1)]), (elem, i, j) => {
+                elem.ext_data.backgroundColor = [0, 0, 0, 0];
+            });
+        }
+
+        function _negative(dz) {
+            if (dz == 0) {
+                return 0
+            } else {
+                return -dz
+            }
+        }
+
+        function _get_ind(dz) {
+            if (dz == 0) {
+                return [0, 0]
+            } else if (dz < 0) {
+                return [0, -dz]
+            } else if (dz > 0) {
+                return [dz, 0]
+            };
+        }
+    </script>
+
+</body>
+
+</html>
