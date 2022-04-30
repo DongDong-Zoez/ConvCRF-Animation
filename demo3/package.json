@@ -1,0 +1,14 @@
+{
+  "name": "796401ba4db0657d",
+  "main": "796401ba4db0657d@1758.js",
+  "version": "1758.0.0",
+  "homepage": "https://observablehq.com/d/796401ba4db0657d",
+  "author": {
+    "name": "8787 Zoez",
+    "url": "https://observablehq.com/@653044c16bfae56f"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}
