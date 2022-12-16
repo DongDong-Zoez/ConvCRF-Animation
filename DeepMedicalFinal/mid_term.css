@@ -1,0 +1,92 @@
+:root {
+    --font-family: 'Courier New', Courier, monospace;
+    --header-font-size: 100px;
+    --paragraph-font-size: 50px;
+
+    --material-font-size: 15px;
+}
+
+* {
+    color: black;
+    text-shadow:
+        1px 1px 3px rgb(255, 255, 255),
+        -1px -1px 3px rgba(0, 0, 0, 0.8);
+}
+
+body{ 
+    position:absolute; 
+    box-sizing:border-box; 
+    transform-origin: 0 0; 
+    -moz-transform-origin:0 0; 
+    -o-transform-origin: 0 0; 
+    -webkit-transform-origin: 0 0; 
+} 
+
+::selection {
+    background-color: white;
+}
+
+h1 {
+    font-size: var(--header-font-size);
+    font-family: var(--font-family);
+    margin-top: 200px;
+}
+
+h3 {
+    font-size: var(--paragraph-font-size);
+    font-family: var(--font-family);
+}
+
+ul li {
+    font-size: var(--paragraph-font-size);
+    font-family: var(--font-family);
+}
+
+ol {
+    list-style: none;
+    padding: 0;
+}
+ol li {
+    font-size: var(--material-font-size);
+    font-family: var(--font-family);
+    counter-increment: step-counter;
+    padding: 0px;
+    padding-top: 10px;
+}
+
+ol li:before {
+    content: counter(step-counter)". ";
+}
+
+.slides>section{
+    width: 100%;
+    height: 100%;
+}
+
+.intro {
+    margin-top: 20px; 
+    /* margin-left: -950px; */
+}
+
+.material {
+    float: right; 
+    text-align: left;
+}
+
+.list {
+    font-size: 50px;
+}
+
+.list-after {
+    font-size: 20px;
+    margin-left: -200px;
+}
+
+.list-container {
+    margin-right: -200px;
+    margin-top: -150px;
+}
+
+.important {
+    color: red;
+}

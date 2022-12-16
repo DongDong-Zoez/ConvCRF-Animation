@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <script src="resize.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" />
+  <link rel="stylesheet" href="./mid_term.css" />
+
+  <script src="plugin/chalkboard/plugin.js"></script>
+  <script src="reveal.js-plugins\chart\plugin.js"></script>
+
+  <script src="reveal.js-plugins/anything/plugin.js"></script>
+  <link rel="stylesheet" href="plugin/chalkboard/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/math.min.js"
+    integrity="sha512-pIUSGiNwAKHXxIcFxTZZ6RC536f6dHQn3LPYUmilYzayjdH4C4GUNo9T9a6VbkUh3rHSsM52nG8kWOg+16oLFg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/katex.min.js"
+    integrity="sha512-aP2YrtSradiFnzmnU72H1bFSExqZGaTzlz+9iH+u2nHMJW7f2QtMEdYqImd5tB0DTdKNtIMVtBclnJnYPumYGw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"
+    integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body>
+
+  <div class="reveal">
+    <div class="slides">
+      <section data-background-color="#dde1e7">
+        <h1>DeepMedical Final reports</h1>
+        <h3>311657007</h3>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Dataset</h3>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Dataset</h3>
+        <img class="" src="dataset.png" width="600" height="600">
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Dataset</h3>
+        <div>
+          <img class="" src="dataset.png" width="500" height="500">
+          <div class="material">
+            <p>Material</p>
+            <ol>
+              <li>Image are in .tiff format</li>
+              <li>Image are all microscopic<br>&emsp;&thinsp; histopathology images</li>
+              <li>The RGB channels are staining<br>&emsp;&thinsp; with protocol</li>
+              <li>We aim at segment the FTUs<br>&emsp;&thinsp; (Functional Tissue Units)</li>
+              <li>Data came from difference consortia<br>&emsp;&thinsp; HuBMAP and HPA</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Dataset</h3>
+        <div>
+          <img class="" src="dataset_lar.png" width="500" height="500">
+          <div class="material">
+            <p>Material</p>
+            <ol>
+              <li>There are five organs<br>&emsp;&thinsp; kidney, large intestine, lung,<br>&emsp;&thinsp; spleen and prostate</li>
+              <li>The origin resolution of the<br>&emsp;&thinsp; data are around 3000 pixels</li>
+              <li>Extra metadata is provided, <br>&emsp;&thinsp; but we are not considering it</li>
+              <li>Difference pixel spacing and <br>&emsp;&thinsp; thickness between consortia</li>
+            </ol>
+            <table style="width:100%; height:100%;">
+              <tr>
+                <th>HPA images</th>
+                <th>Pixel Spacing</th>
+                <th>Thickness</th>
+              </tr>
+              <tr>
+                <td>kidney</td>
+                <td>0.4 μm</td>
+                <td>4 μm</td>
+              </tr>
+              <tr>
+                <td>large intestine</td>
+                <td>0.4 μm</td>
+                <td>4 μm</td>
+              </tr>
+                <tr>
+                <td>lung</td>
+                <td>0.4 μm</td>
+                <td>4 μm</td>
+              </tr>
+                <tr>
+                <td>spleen</td>
+                <td>0.4 μm</td>
+                <td>4 μm</td>
+              </tr>
+                <tr>
+                <td>prostate</td>
+                <td>0.4 μm</td>
+                <td>4 μm</td>
+              </tr>
+            </table>
+            <table style="width:100%; height:100%;"><br><br>
+              <tr>
+                <th>HubMAP images</th>
+                <th>Pixel Spacing</th>
+                <th>Thickness</th>
+              </tr>
+              <tr>
+                <td>kidney</td>
+                <td>0.5 μm</td>
+                <td>10 μm</td>
+              </tr>
+              <tr>
+                <td>large intestine</td>
+                <td>0.2290 μm</td>
+                <td>8 μm</td>
+              </tr>
+                <tr>
+                <td>lung</td>
+                <td>0.7562 μm</td>
+                <td>4 μm</td>
+              </tr>
+                <tr>
+                <td>spleen</td>
+                <td>0.4945 μm</td>
+                <td>5 μm</td>
+              </tr>
+                <tr>
+                <td>prostate</td>
+                <td>6.263 μm</td>
+                <td>5 μm</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3>Data Distribution</h3>
+        <div style="height: 480px">
+          <canvas data-chart="bar" data-chart-src="data.csv">
+            <!--
+            {
+            "data" : {
+            "datasets" : [{ 
+              backgroundColor:{
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+              }      
+             } ]
+            },
+            "options": { scales: {y: { ticks: { format: { style: 'percent' } } } } },
+            }
+            -->
+          </canvas>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3>Data Distribution</h3>
+        <div style="height: 480px">
+          <canvas data-chart="bar" data-chart-src="organ.csv">
+            <!--
+            {
+            "data" : {
+            "datasets" : [{ 
+              backgroundColor:{
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+              },
+              borderColor: {
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+              },    
+             } ]
+            },
+            "options": { scales: {y: { ticks: { format: { style: 'percent' } } } } },
+            }
+            -->
+          </canvas>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list">Binary Class or Multi-class</li>
+            <li class="list">Tiled Image or Downscale</li>
+            <li class="list">Differ pixel size and thickness</li>
+            <li class="list">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after" style="color:blue">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="width: 480px; height: 480px; margin-left: 350px">
+            <img class="" src="assets/image_0_0.jpg" width="160" height="160" style="padding: 0px">
+            <img class="" src="assets/image_0_1.jpg" width="160" height="160" style="margin-left: -10px; margin-top: 0px">
+            <img class="" src="assets/image_0_2.jpg" width="160" height="160" style="margin-left: -10px; margin-top: 0px">
+            <img class="" src="assets/image_1_0.jpg" width="160" height="160" style="padding: 0px; margin-top: -10px">
+            <img class="" src="assets/image_1_1.jpg" width="160" height="160" style="margin-left: -10px; margin-top: -10px">
+            <img class="" src="assets/image_1_2.jpg" width="160" height="160" style="margin-left: -10px; margin-top: -10px">
+            <img class="" src="assets/image_2_0.jpg" width="160" height="160" style="padding: 0px; margin-top: -20px">
+            <img class="" src="assets/image_2_1.jpg" width="160" height="160" style="margin-left: -10px; margin-top: -20px">
+            <img class="" src="assets/image_2_2.jpg" width="160" height="160" style="margin-left: -10px; margin-top: -20px">
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after" style="color:blue">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="width: 500px; height: 500px; margin-left: 350px">
+            <img class="" src="assets/image_0_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_0_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_0_2.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_2.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_2.jpg" width="160" height="160">
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after" style="color:blue">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="text-align: left; margin-left: 300px;">
+            <p>Orgin resolution is around 3000 pixels, we may loss some local information if we downscale directly</p>
+            <p>Tiled Image may increase the number of training images, but need to specify the image size, overlap or non-overlap</p>
+            <p>At testing phase, how to aggregate the tiled image?</p>
+          </div>
+          <div style="width: 500px; height: 500px; margin-left: 350px">
+            <img class="" src="assets/image_0_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_0_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_0_2.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_1_2.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_0.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_1.jpg" width="160" height="160">
+            <img class="" src="assets/image_2_2.jpg" width="160" height="160">
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Tiled Image or Downscale</li>
+            <li class="list-after" style="color:blue">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="text-align: left; margin-left: 300px;">
+          
+            <p>Our goal is to segment the FTUs in the histopathology image no matter what organ the image is</p>
+            <p>https://www.kaggle.com/code/w3579628328/mmsegmentation-lb0-78-inference-1-5folds/comments</p>
+            <p class="important">In this report, we consider downscale image</p>
+          </div>
+          <br><br>
+          <p>Advantage of Multi-class</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Increase the distance between classes</li>
+            <li style="font-size: var(--material-font-size)">The object-class and background</li>
+            <li style="font-size: var(--material-font-size)">The object-class and other classes</li>
+          </ol>
+          <p>Disadvantage of Multi-class</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Need more images to train</li>
+          </ol>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after" style="color:blue">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="text-align: left; margin-left: 300px;">
+          
+            <p>Note that the pixel spacing and thickness are difference between training images and testing images</p>
+            <p>https://www.kaggle.com/code/gunesevitan/pixel-size-and-tissue-thickness-domain-adaptation</p>
+          </div>
+          <br>
+          <p>There are two ways to eliminate the difference between data</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Change the training data distribution</li>
+            <li style="font-size: var(--material-font-size)">Change the testing  data distribution</li>
+          </ol>
+
+          <p>Pixel size adaption</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Relative scale factor can be calculated by training_pixel_size / testing_pixel_size</li>
+            <li style="font-size: var(--material-font-size)">For instance, HPA prostate images have 0.4 μm and HuBMAP prostate images have 6.263 μm <br>&emsp;&thinsp; pixel size. The rescale factor is 0.4/6.263=0.063</li>
+          </ol>
+
+          <p>Thickness adaption</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Relative scale factor can be calculated by training_thickness / testing_thickness</li>
+            <li style="font-size: var(--material-font-size)">Multiply Saturation channel by 1 + alpha * rescale_factor</li>
+            <li style="font-size: var(--material-font-size)">Multiply Value channel by 1 + alpha * rescale_factor</li>
+            <li style="font-size: var(--material-font-size)">Luminosity is standardized using staintools package in order reduce artifacts on the <br>&emsp;&thinsp; background.</li>
+          </ol>
+          <img class="" src="thickness.png" width="800" height="130" style="margin-left: 250px">
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after" style="color:blue">Differ pixel size and thickness</li>
+            <li class="list-after">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="text-align: left; margin-left: 300px;">
+            <p>The following graph show the difference after adaption</p>
+            <p>Someone has experimental that the augmented not significantly improve model performace</p>
+            <p class="important">We are not cosidering pixel adaption in this report</p>
+          </div>
+          
+          <img class="" src="augmented.png" width="800" height="400" style="margin-left: 250px">
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after" style="color:blue">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          <div style="text-align: left; margin-left: 300px;">
+            <p>The following graph show the difference between HPA images and HubMAP images</p>
+          </div>
+
+          <p>Winning the fight against domain shifting</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Align domains (CycleGAN)</li>
+            <li style="font-size: var(--material-font-size)">Increase data diversity</li>
+            <li style="font-size: var(--material-font-size)">Decrease data diversity</li>
+          </ol>
+          
+          <img class="" src="compare.png" width="800" style="margin-left: 250px">
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Difficulity</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Tiled Image or Downscale</li>
+            <li class="list-after">Binary Class or Multi-class</li>
+            <li class="list-after">Differ pixel size and thickness</li>
+            <li class="list-after" style="color:blue">Domain shifting (adaption)</li>
+          </ol>
+        </div>
+        <div class="list-container">
+
+          <p>https://www.kaggle.com/code/nghihuynh/stain-normalization-staingan-stainnet</p>
+
+          <p>Increase data diversity</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Heavy color augmentation</li>
+            <li style="font-size: var(--material-font-size)">RGB shift or channel shuffle</li>
+            <li style="font-size: var(--material-font-size)">HSV adjustification and HE normalize</li>
+          </ol>
+
+          <p>Decrease data diversity</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">StainGAN: based on CycleGAN to transfer the stain style. <br>&emsp;&thinsp; Limitation: complex and might have a risk of introducing some artifacts</li>
+            <li style="font-size: var(--material-font-size)">StainNet: uses StainGAN as the teacher network, <br>&emsp;&thinsp; to learn the color mapping by distillation learning.</li>
+          </ol>
+
+          <img class="" src="stain.png" width="800" style="margin-left: 250px">
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Experimental</h3>
+        <div>
+          <img class="" src="baseline_config.png" width="250" height="550">
+          <div class="material">
+            <p>Material</p>
+            <ol>
+              <li>We first show how poorly a simple baseline can be</li>
+              <li>The evaluations are calculated by Dice coefficient</li>
+              <li>The results are shown as following:</li>
+              <table style="width:100%; height:100%;"><br><br>
+                <tr>
+                  <th>Method</th>
+                  <th>CV</th>
+                  <th>Public LB</th>
+                  <th>Private LB</th>
+                </tr>
+                <tr>
+                  <td>basline</td>
+                  <td class="important">0.8574</td>
+                  <td>0.28111</td>
+                  <td>0.14655</td>
+                </tr>
+                <tr>
+                  <td>+augmentation</td>
+                  <td>0.8221</td>
+                  <td>0.59358</td>
+                  <td>0.49413</td>
+                </tr>
+                  <tr>
+                  <td>+augmentation2</td>
+                  <td>0.7804</td>
+                  <td class="important">0.61922</td>
+                  <td class="important">0.55148</td>
+                </tr>
+                  <tr>
+                  <td>+heavy augmentation</td>
+                  <td>0.7897</td>
+                  <td>0.56008</td>
+                  <td>0.48599</td>
+                </tr>
+                  <tr>
+                  <td>+more epochs</td>
+                  <td>0.7933</td>
+                  <td>0.46522</td>
+                  <td>0.35205</td>
+                </tr>
+              </table>
+            </ol>
+            <p>Insights</p>
+            <ol>
+              <li>In the first trial, there is a large gap between CV score and LB score</li>
+              <li>Our goal is to minimize the gap between these two evaluations</li>
+              <li>Data augmentation shrinkage the gap between CV score and LB score</li>
+              <li>More epochs add to training phase, the LB score drops dramatically</li>
+              <li>Heavy data augmentation, but LB score drops dramatically</li>
+              <li>CV score on validation data is not referable</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">How to improve</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list">Hyperparameters</li>
+            <li class="list">Thresholding</li>
+            <li class="list">ensemble or TTA</li>
+          </ol>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Improvement</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after" style="color:blue">Hyperparameters</li>
+            <li class="list-after">Thresholding</li>
+            <li class="list-after">ensemble or TTA</li>
+          </ol>
+        </div>
+        <div class="list-container">
+
+          <p>There are a few ways to improve model robustness</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Larger model architecture</li>
+            <li style="font-size: var(--material-font-size)">Decrease the number of batch images</li>
+            <li style="font-size: var(--material-font-size)">Increase image resolution</li>
+          </ol>
+
+          <p>In this report, what we have done is</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Use CoaT as our backbone</li>
+            <li style="font-size: var(--material-font-size)">decrease batch size to 1</li>
+            <li style="font-size: var(--material-font-size)">Increase image resolution to 1024</li>
+          </ol>
+          
+          <img class="" src="coat2.jpg"  height="300" style="margin-left: -270px">
+        </div>
+      </section>
+
+      
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Improvement</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Hyperparameters</li>
+            <li class="list-after" style="color:blue">Thresholding</li>
+            <li class="list-after">ensemble or TTA</li>
+          </ol>
+        </div>
+        <div class="list-container">
+          
+          <img class="" src="eval.png" height="800" style="margin-left: 250px;">
+        </div>
+        <div class="absolute" style="position: absolute; left: -151px; bottom: 50px; width: 400px; height: 400px; text-align: left;">
+          <p>Details</p>
+          <ol>
+            <li>Difference consortias use differ <br>&emsp;&thinsp; thresholds</li>
+            <li>Difference organs use differ thresholds</li>
+            <li>Green region: True Positive</li>
+            <li>Red region: False Positive</li>
+            <li>Blue region: False Negative</li>
+          </ol>
+        </div>
+      </section>
+      
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro" style="margin-left: -900px">Improvement</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list-after">Hyperparameters</li>
+            <li class="list-after">Thresholding</li>
+            <li class="list-after" style="color:blue">ensemble or TTA</li>
+          </ol>
+        </div>
+        <div class="list-container">
+
+          <p>Possible ensemble techniques</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">KFolds, difference models (independent)</li>
+            <li style="font-size: var(--material-font-size)">stacking model (FCBFormer[2022])</li>
+            <li style="font-size: var(--material-font-size)">Difference image resolution</li>
+          </ol>
+
+          <p>TTA (Test-Time-Augmentation)</p>
+          <ol style="margin-left: 300px; text-align: left;">
+            <li style="font-size: var(--material-font-size)">Heavy Test Time augmentation</li>
+            <li style="font-size: var(--material-font-size)">RandomFlip, RandomRotate, ColorJitter</li>
+            <li style="font-size: var(--material-font-size)">Weight average, max, min</li>
+          </ol>
+          
+          <img class="" src="TTA.png" width="800" style="margin-left: 150px">
+        </div>
+
+        <div class="absolute" style="position: absolute; left: -151px; bottom: 50px; width: 400px; height: 400px; text-align: left;">
+          <img class="" src="FCB.png" width="400">
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Experimental</h3>
+        <div>
+          <img class="" src="improve_config.png" width="250" height="550">
+          <div class="material">
+            <p>Material</p>
+            <ol>
+              <li>Now, we change our backbone to CoaT</li>
+              <li>Difference thresholds accross five organs</li>
+              <li>heavy TTA at inference</li>
+              <table style="width:100%; height:100%;"><br><br>
+                <tr>
+                  <th>Method</th>
+                  <th>Public LB</th>
+                  <th>Private LB</th>
+                </tr>
+                <tr>
+                  <td>CoaT (four folds)</td>
+                  <td>0.7278</td>
+                  <td>0.70878</td>
+                </tr>
+                <tr>
+                  <td>Hyperparameters</td>
+                  <td>0.76016</td>
+                  <td>0.73552</td>
+                </tr>
+                  <tr>
+                  <td>+Heavy Augmentation</td>
+                  <td>0.76263</td>
+                  <td>0.74008</td>
+                <tr>
+                  <td>+Stain Normalization</td>
+                  <td class="important">0.77215</td>
+                  <td class="important">0.75762</td>
+                </tr>
+              </table>
+            </ol>
+            <p>Insights</p>
+            <ol>
+              <li>Four folds do make model more stable</li>
+              <li>small batch size better than large batch size</li>
+              <li>TTA improve model performance but not significantly</li>
+              <li>Larger model give the better performance</li>
+              <li>Heavy augmentation do improve performance when model is stable</li>
+              <li>small threshold (0.1,0.2) at HuBMAP improve significantly</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- <section data-background-color="#dde1e7" data-background-iframe="https://wandb.ai/ddcvlab/Quality-Control/reports/Quality-Control-Midterm-reports--VmlldzoyODgyMzky" data-background-interactive>
+      </section> -->
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Conclusion</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list">Generalization Test is <br>&emsp;&thinsp; quite different than <br>&emsp;&thinsp; traditional tasks</li>
+            <li class="list">Heavy Augmentation is the <br>&emsp;&thinsp; key to eliminate the gap</li>
+            <li class="list">Heavy Augmentation is <br>&emsp;&thinsp; effective compare to stain <br>&emsp;&thinsp; normalization</li>
+          </ol>
+        </div>
+      </section>
+
+      <section data-background-color="#dde1e7" data-auto-animate>
+        <h3 class="intro">Future Work</h3>
+        <div style="text-align: left; padding-left: 50px">
+          <ol>
+            <li class="list">Pixel Size Adaption</li>
+            <li class="list">Tissue Thickness Adaption</li>
+            <li class="list">Style Transfer</li>
+            <li class="list">Tiled Image</li>
+            <li class="list">Multi-Class Segmentation</li>
+            <li class="list">Ensemble of models</li>
+            <li class="list">External data source</li>
+          </ol>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  <script src="mid_term.js"></script>
+</body>
+
+</html>

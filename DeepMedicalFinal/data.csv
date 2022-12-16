@@ -1,0 +1,6 @@
+split, sample
+train, 263
+val, 88
+public test HAP, 81
+public test HubMAP, 210
+private test HubMAP, 238
